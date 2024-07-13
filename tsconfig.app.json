@@ -33,9 +33,9 @@
       // "@assets/*": [
       //   "src/assets/*"
       // ],
-      // "@models/*": [
-      //   "src/models/*"
-      // ],
+      "@models/*": [
+        "src/models/*"
+      ],
       // "@utils/*": [
       //   "src/utils/*"
       // ],
