@@ -5,6 +5,7 @@ import classNames from "classnames";
 interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary";
   icon?: React.ReactNode;
+  iconPosition?: "right" | "left";
   children: React.ReactNode;
 }
 
@@ -15,6 +16,7 @@ export const Button: React.FC<IProps> = (props) => {
     icon,
     children,
     className,
+    iconPosition = "right",
     ...rest
   } = props;
 
@@ -30,8 +32,9 @@ export const Button: React.FC<IProps> = (props) => {
 
   return (
     <button className={buttonClass} disabled={disabled} type="button" {...rest}>
+      {icon && iconPosition === "left" && icon}
       {children}
-      {icon && icon}
+      {icon && iconPosition === "right" && icon}
     </button>
   );
 };
