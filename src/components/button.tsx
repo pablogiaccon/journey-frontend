@@ -9,7 +9,14 @@ interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button: React.FC<IProps> = (props) => {
-  const { variant = "primary", disabled, icon, children, ...rest } = props;
+  const {
+    variant = "primary",
+    disabled,
+    icon,
+    children,
+    className,
+    ...rest
+  } = props;
 
   const buttonClass = classNames(
     "rounded-lg px-5 py-2 font-medium flex items-center gap-2 transition",
@@ -17,7 +24,8 @@ export const Button: React.FC<IProps> = (props) => {
       "bg-lime-300 text-lime-950  hover:bg-lime-400": variant === "primary",
       "bg-zinc-800 text-zinc-200 hover:bg-zinc-700": variant === "secondary",
       "opacity-60": !!disabled,
-    }
+    },
+    className
   );
 
   return (

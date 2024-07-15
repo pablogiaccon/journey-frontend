@@ -1,11 +1,27 @@
-import { MouseEvent, ButtonHTMLAttributes } from "react";
+import {
+  MouseEvent,
+  ButtonHTMLAttributes,
+  ReactElement,
+  cloneElement,
+  ReactNode,
+} from "react";
 
 import { useModalContext } from "./modal";
 
-type TTrigger = ButtonHTMLAttributes<HTMLButtonElement>;
+type TTriggerAsChild = ButtonHTMLAttributes<HTMLButtonElement> & {
+  asChild: true;
+  children: ReactElement;
+};
 
-export const ModalTrigger: React.FC<TTrigger> = (props: TTrigger) => {
-  const { children, onClick, ...rest } = props;
+type TTrigger = ButtonHTMLAttributes<HTMLButtonElement> & {
+  asChild?: never;
+  children: ReactNode;
+};
+
+type TTriggerBasis = TTriggerAsChild | TTrigger;
+
+export const ModalTrigger: React.FC<TTriggerBasis> = (props) => {
+  const { children, onClick, asChild = false, ...rest } = props;
 
   const { onOpen } = useModalContext();
 
@@ -15,6 +31,12 @@ export const ModalTrigger: React.FC<TTrigger> = (props: TTrigger) => {
     if (onClick) {
       onClick(e);
     }
+  }
+
+  if (asChild) {
+    return cloneElement(children as ReactElement, {
+      onClick: handleClick,
+    });
   }
 
   return (

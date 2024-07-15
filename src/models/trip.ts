@@ -1,5 +1,7 @@
 export interface INewTripForm {
-  location: string;
   date: Date;
+  email: string;
   guests: Array<{ email: string }>;
+  location: string;
+  name: string;
 }

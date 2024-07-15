@@ -7,9 +7,18 @@ import "./styles/global.css";
 import { ModalInviteGuests } from "@components/modal-invite-guests";
 import { INewTripForm } from "@models/index";
 import { FormProvider, useForm } from "react-hook-form";
+import { ModalTripConfirmation } from "@components/modal-trip-confirmation";
 
 export function App() {
-  const formMethods = useForm<INewTripForm>();
+  const formMethods = useForm<INewTripForm>({
+    defaultValues: {
+      date: new Date(),
+      email: "",
+      guests: [],
+      location: "",
+      name: "",
+    },
+  });
 
   const [isGuestsInputOpen, setIsGuestsInputOpen] = useState(false);
 
@@ -77,7 +86,7 @@ export function App() {
 
                 <div className="w-px h-6 bg-zinc-800" />
 
-                <Button icon={<ArrowRight />}>Confirmar viagem</Button>
+                <ModalTripConfirmation />
               </div>
             )}
           </div>

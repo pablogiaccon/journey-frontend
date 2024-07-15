@@ -1,13 +1,14 @@
-import { UserRoundPlus, X, AtSign, Plus } from "lucide-react";
-
-import * as Modal from "./modal";
-import { Button } from "./button";
 import {
   Controller,
   useFieldArray,
   useForm,
   useFormContext,
 } from "react-hook-form";
+import { UserRoundPlus, X, AtSign, Plus } from "lucide-react";
+import { isEmpty } from "lodash";
+
+import * as Modal from "./modal";
+import { Button } from "./button";
 import { INewTripForm } from "@models/index";
 
 interface NewEmailForm {
@@ -42,9 +43,15 @@ export const ModalInviteGuests: React.FC = () => {
     <Modal.Root>
       <Modal.Trigger className="flex items-center gap-2 flex-1 text-left">
         <UserRoundPlus className="size-5 text-zinc-400" />
-        <span className="text-zinc-400 text-lg flex-1">
-          Quem estará na viagem?
-        </span>
+        {isEmpty(fields) ? (
+          <span className="text-zinc-400 text-lg flex-1">
+            Quem estará na viagem?
+          </span>
+        ) : (
+          <span className="text-zinc-100 text-lg flex-1">
+            {fields.length} pessoa(s) convidada(s)
+          </span>
+        )}
       </Modal.Trigger>
 
       <Modal.Portal>
