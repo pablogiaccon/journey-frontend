@@ -1,9 +1,27 @@
-import { ButtonHTMLAttributes } from "react";
+import { ComponentProps } from "react";
+import { tv, VariantProps } from "tailwind-variants";
 
-import classNames from "classnames";
+const buttonVariants = tv({
+  base: "rounded-lg px-5 font-medium flex items-center justify-center gap-2 transition disabled:opacity-60",
+  variants: {
+    variant: {
+      primary: "bg-lime-300 text-lime-950  hover:bg-lime-400",
+      secondary: "bg-zinc-800 text-zinc-200 hover:bg-zinc-700",
+    },
+    size: {
+      default: "py-2",
+      full: "w-full h-11",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "default",
+  },
+});
 
-interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary";
+interface IProps
+  extends ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
   icon?: React.ReactNode;
   iconPosition?: "right" | "left";
   children: React.ReactNode;
@@ -15,23 +33,18 @@ export const Button: React.FC<IProps> = (props) => {
     disabled,
     icon,
     children,
-    className,
     iconPosition = "right",
+    size,
     ...rest
   } = props;
 
-  const buttonClass = classNames(
-    "rounded-lg px-5 py-2 font-medium flex items-center gap-2 transition",
-    {
-      "bg-lime-300 text-lime-950  hover:bg-lime-400": variant === "primary",
-      "bg-zinc-800 text-zinc-200 hover:bg-zinc-700": variant === "secondary",
-      "opacity-60": !!disabled,
-    },
-    className
-  );
-
   return (
-    <button className={buttonClass} disabled={disabled} type="button" {...rest}>
+    <button
+      className={buttonVariants({ variant, size })}
+      disabled={disabled}
+      type="button"
+      {...rest}
+    >
       {icon && iconPosition === "left" && icon}
       {children}
       {icon && iconPosition === "right" && icon}

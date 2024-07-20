@@ -62,7 +62,7 @@ const CreateActivityContent: React.FC = () => {
         )}
       />
 
-      <Button className="w-full justify-center" type="submit">
+      <Button size="full" type="submit">
         Salvar atividade
       </Button>
     </form>

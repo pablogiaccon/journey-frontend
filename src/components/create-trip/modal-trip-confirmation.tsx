@@ -57,7 +57,7 @@ const TripConfirmationContent: React.FC = () => {
         )}
       />
       <Button
-        className="w-full justify-center"
+        size="full"
         type="submit"
         onClick={handleSubmit(handleConfirmTrip)}
       >

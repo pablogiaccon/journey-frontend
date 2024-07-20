@@ -62,7 +62,7 @@ const CreateLinkContent: React.FC = () => {
         )}
       />
 
-      <Button className="w-full justify-center" type="submit">
+      <Button size="full" type="submit">
         Salvar link
       </Button>
     </form>
@@ -73,12 +73,7 @@ export const ModalCreateLink: React.FC = () => {
   return (
     <Modal.Root>
       <Modal.Trigger asChild>
-        <Button
-          className="justify-center"
-          variant="secondary"
-          iconPosition="left"
-          icon={<Plus />}
-        >
+        <Button variant="secondary" iconPosition="left" icon={<Plus />}>
           Cadastrar novo link
         </Button>
       </Modal.Trigger>

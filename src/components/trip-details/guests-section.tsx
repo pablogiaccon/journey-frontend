@@ -44,12 +44,7 @@ export const GuestsSection: React.FC = () => {
         </div>
       </div>
 
-      <Button
-        className="justify-center"
-        variant="secondary"
-        iconPosition="left"
-        icon={<UserCog />}
-      >
+      <Button variant="secondary" iconPosition="left" icon={<UserCog />}>
         Cadastrar novo link
       </Button>
     </div>
