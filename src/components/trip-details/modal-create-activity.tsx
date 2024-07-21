@@ -79,7 +79,7 @@ export const ModalCreateActivity: React.FC = () => {
       </Modal.Trigger>
 
       <Modal.Portal>
-        <Modal.Content>
+        <Modal.Content size="form">
           <Modal.Header
             subHeader={
               <p className="text-sm text-zinc-400">

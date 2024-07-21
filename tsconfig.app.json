@@ -36,9 +36,9 @@
       "@models/*": [
         "src/models/*"
       ],
-      // "@utils/*": [
-      //   "src/utils/*"
-      // ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
       // "@hooks/*": [
       //   "src/hooks/*"
       // ]

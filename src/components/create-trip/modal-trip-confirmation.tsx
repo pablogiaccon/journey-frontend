@@ -3,6 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { INewTripForm } from "@models/index";
+import { validateEmail } from "@utils/validateEmail";
 
 import * as Modal from "../modal";
 import { Button } from "../button";
@@ -22,7 +23,7 @@ const TripConfirmationContent: React.FC = () => {
     <div className="space-y-3">
       <Controller
         control={control}
-        name="name"
+        name="ownerName"
         rules={{
           required: "Campo obrigatório",
         }}
@@ -30,7 +31,7 @@ const TripConfirmationContent: React.FC = () => {
           <Input
             placeholder="Seu nome completo"
             type="text"
-            name="name"
+            name="ownerName"
             value={field.value}
             onChange={field.onChange}
             icon={<User />}
@@ -40,15 +41,18 @@ const TripConfirmationContent: React.FC = () => {
       />
       <Controller
         control={control}
-        name="email"
+        name="ownerEmail"
         rules={{
           required: "Campo obrigatório",
+          validate: {
+            isEmail: (email) => validateEmail(email) || "E-mail inválido",
+          },
         }}
         render={({ field, fieldState: { error } }) => (
           <Input
             placeholder="Seu e-mail pessoal"
             type="email"
-            name="email"
+            name="ownerEmail"
             value={field.value}
             onChange={field.onChange}
             icon={<Mail />}
@@ -75,7 +79,7 @@ export const ModalTripConfirmation: React.FC = () => {
       </Modal.Trigger>
 
       <Modal.Portal>
-        <Modal.Content>
+        <Modal.Content size="form">
           <Modal.Header
             subHeader={
               <p className="text-sm text-zinc-400">

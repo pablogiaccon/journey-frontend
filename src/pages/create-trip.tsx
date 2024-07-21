@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowRight, Calendar, MapPin, Settings2 } from "lucide-react";
-import { FormProvider, useForm } from "react-hook-form";
+import { ArrowRight, MapPin, Settings2 } from "lucide-react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 import { INewTripForm } from "@models/index";
 
@@ -9,15 +9,17 @@ import {
   ModalInviteGuests,
   ModalTripConfirmation,
 } from "@components/create-trip";
+import { DatePicker } from "@components/date-picker";
+import { Input } from "@components/input";
 
 export function CreateTripPage() {
   const formMethods = useForm<INewTripForm>({
     defaultValues: {
-      date: new Date(),
-      email: "",
       guests: [],
       location: "",
-      name: "",
+      ownerEmail: "",
+      ownerName: "",
+      rangeDate: undefined,
     },
   });
 
@@ -31,6 +33,12 @@ export function CreateTripPage() {
     setIsGuestsInputOpen(false);
   }
 
+  const location = formMethods.watch("location");
+  const rangeDate = formMethods.watch("rangeDate");
+
+  const isLocationAndDateEmpty =
+    !!location.length && !!rangeDate?.from && !!rangeDate.to;
+
   return (
     <FormProvider {...formMethods}>
       <div className="h-screen flex items-center justify-center bg-pattern bg-no-repeat bg-center">
@@ -43,26 +51,38 @@ export function CreateTripPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="h-16 bg-zinc-900 px-4 rounded-xl flex items-center gap-3 shadow-shape">
-              <div className="flex items-center gap-2 flex-1">
-                <MapPin className="size-5 text-zinc-400" />
-                <input
-                  className="bg-transparent text-lg placeholder-zinc-400 outline-none w-full"
-                  placeholder="Para onde vc vai?"
-                  type="text"
-                  disabled={isGuestsInputOpen}
-                />
-              </div>
+            <div className="h-16 bg-zinc-900 pr-4 rounded-xl flex items-center gap-3 shadow-shape">
+              <Controller
+                control={formMethods.control}
+                name="location"
+                rules={{
+                  required: "Campo obrigatório",
+                }}
+                render={({ field }) => (
+                  <Input
+                    icon={<MapPin />}
+                    containerStyles={{ variant: "embed" }}
+                    placeholder="Para onde vc vai?"
+                    type="text"
+                    disabled={isGuestsInputOpen}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
 
-              <div className="flex items-center gap-2 ">
-                <Calendar className="size-5 text-zinc-400" />
-                <input
-                  className="bg-transparent text-lg placeholder-zinc-400 outline-none w-40"
-                  placeholder="Quando?"
-                  type="text"
-                  disabled={isGuestsInputOpen}
-                />
-              </div>
+              <Controller
+                control={formMethods.control}
+                name="rangeDate"
+                render={({ field }) => (
+                  <DatePicker
+                    onSelectRange={field.onChange}
+                    rangeDate={field.value}
+                    triggerText="Quando?"
+                    disabled={isGuestsInputOpen}
+                  />
+                )}
+              />
 
               <div className="w-px h-6 bg-zinc-800" />
 
@@ -75,7 +95,11 @@ export function CreateTripPage() {
                   Alterar local/data
                 </Button>
               ) : (
-                <Button icon={<ArrowRight />} onClick={handleOpenGuestsInput}>
+                <Button
+                  disabled={!isLocationAndDateEmpty}
+                  icon={<ArrowRight />}
+                  onClick={handleOpenGuestsInput}
+                >
                   Continuar
                 </Button>
               )}

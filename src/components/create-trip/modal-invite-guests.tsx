@@ -7,10 +7,11 @@ import {
   useForm,
   useFormContext,
 } from "react-hook-form";
-import { UserRoundPlus, X, AtSign, Plus } from "lucide-react";
+import { UserRoundPlus, X, AtSign, Plus, OctagonX } from "lucide-react";
 import { isEmpty } from "lodash";
 
 import { INewTripForm } from "@models/index";
+import { validateDuplicity, validateEmail } from "@utils/validateEmail";
 
 import * as Modal from "../modal";
 import { Button } from "../button";
@@ -70,28 +71,55 @@ const InviteGuestsContent: React.FC<IInviteGuests> = (props) => {
         onSubmit={handleSubmit(handleAddNewEmail)}
         className="p-2.5 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center gap-2"
       >
-        <div className="px-2 flex items-center flex-1 gap-2">
-          <AtSign className="size-5 text-zinc-400" />
+        <Controller
+          control={newEmailFormControl}
+          name="email"
+          rules={{
+            required: "Campo obrigatório",
+            validate: {
+              isEmail: (email) => validateEmail(email) || "E-mail inválido",
+              isDuplicated: (email) =>
+                !validateDuplicity(
+                  email,
+                  fields.map((item) => item.email)
+                ) || "E-mail já adicionado",
+            },
+          }}
+          render={({ field, fieldState: { invalid, error } }) => (
+            <>
+              <div className="px-2 flex items-center flex-1 gap-2">
+                <AtSign
+                  className={`size-5 ${
+                    invalid ? "text-red-500" : "text-zinc-400"
+                  }`}
+                />
 
-          <Controller
-            control={newEmailFormControl}
-            name="email"
-            render={({ field }) => (
-              <input
-                className="bg-transparent text-lg placeholder-zinc-400 outline-none flex-1 h-full"
-                placeholder="Digite o email do convidado"
-                type="email"
-                name="email"
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </div>
+                <input
+                  className={`bg-transparent text-lg placeholder-zinc-400 outline-none flex-1 h-full ${
+                    invalid
+                      ? "placeholder-red-500 text-red-500"
+                      : "placeholder-zinc-400 text-zinc-400"
+                  }`}
+                  placeholder="Digite o email do convidado"
+                  type="email"
+                  name="email"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
 
-        <Button type="submit" icon={<Plus />}>
-          Convidar
-        </Button>
+                {invalid && (
+                  <span title={error?.message}>
+                    <OctagonX className="text-red-500" />
+                  </span>
+                )}
+              </div>
+
+              <Button type="submit" disabled={invalid} icon={<Plus />}>
+                Convidar
+              </Button>
+            </>
+          )}
+        />
       </form>
     </>
   );
@@ -122,7 +150,7 @@ export const ModalInviteGuests: React.FC = () => {
       </Modal.Trigger>
 
       <Modal.Portal>
-        <Modal.Content>
+        <Modal.Content size="form">
           <Modal.Header
             subHeader={
               <p className="text-sm text-zinc-400">

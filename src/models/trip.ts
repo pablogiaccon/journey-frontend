@@ -1,7 +1,9 @@
+import { DateRange } from "react-day-picker";
+
 export interface INewTripForm {
-  date: Date;
-  email: string;
   guests: Array<{ email: string }>;
   location: string;
-  name: string;
+  ownerEmail: string;
+  ownerName: string;
+  rangeDate: DateRange | undefined;
 }
