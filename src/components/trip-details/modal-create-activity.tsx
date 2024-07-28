@@ -1,32 +1,39 @@
+import { useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { Calendar, Plus, Tag } from "lucide-react";
+
+import { useCreateActivity, TCreateNewActivity } from "@services/index";
 
 import * as Modal from "../modal";
 import { Button } from "../button";
 import { Input } from "@components/input";
 
-interface NewActivityForm {
-  description: string;
-  occurs_at: Date;
-}
-
 const CreateActivityContent: React.FC = () => {
-  const { control, handleSubmit } = useForm<NewActivityForm>({
+  const { tripId } = useParams();
+  const { mutateAsync, isPending } = useCreateActivity({ tripId });
+  const { control, handleSubmit } = useForm<TCreateNewActivity>({
     defaultValues: {
-      description: "",
+      title: "",
       occurs_at: new Date(),
     },
   });
 
-  function handleCreateActivity(data: NewActivityForm) {
-    console.log("data: ", data);
+  async function handleCreateActivity({
+    occurs_at,
+    title,
+  }: TCreateNewActivity) {
+    try {
+      await mutateAsync({ occurs_at, title });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit(handleCreateActivity)} className="space-y-3">
       <Controller
         control={control}
-        name="description"
+        name="title"
         rules={{
           required: "Campo obrigatório",
         }}
@@ -34,7 +41,7 @@ const CreateActivityContent: React.FC = () => {
           <Input
             placeholder="Qual a atividade?"
             type="text"
-            name="description"
+            name="title"
             value={field.value}
             onChange={field.onChange}
             icon={<Tag />}
@@ -62,7 +69,7 @@ const CreateActivityContent: React.FC = () => {
         )}
       />
 
-      <Button size="full" type="submit">
+      <Button size="full" type="submit" isLoading={isPending}>
         Salvar atividade
       </Button>
     </form>

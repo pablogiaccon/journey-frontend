@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { IUseTripServices } from "./trips.type";
+import { IUseTripServices, TCreateNewActivity } from "./trips.type";
 import { api } from "@lib/axios";
 import {
   INewTripForm,
@@ -72,8 +72,19 @@ const useCreateTripService = () => {
 const useInviteParticipant = ({ tripId }: IUseTripServices) => {
   return useMutation({
     mutationFn: ({ email }: { email: string }) => {
-      return api.post<{ tripId: string }>(`/trips/${tripId}/invites`, {
+      return api.post(`/trips/${tripId}/invites`, {
         email,
+      });
+    },
+  });
+};
+
+const useCreateActivity = ({ tripId }: IUseTripServices) => {
+  return useMutation({
+    mutationFn: ({ occurs_at, title }: TCreateNewActivity) => {
+      return api.post<{ activityId: string }>(`/trips/${tripId}/activities`, {
+        occurs_at,
+        title,
       });
     },
   });
@@ -85,4 +96,5 @@ export {
   useTripLinksService,
   useCreateTripService,
   useInviteParticipant,
+  useCreateActivity,
 };
