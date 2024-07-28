@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 
 import {
-  useInviteParticipant,
+  useInviteParticipantService,
   useTripParticipantsService,
 } from "@services/trips";
 import { validateDuplicity, validateEmail } from "@utils/validateEmail";
@@ -19,7 +19,7 @@ const ManageParticipantsContent = () => {
   const { data: participants, isFetching } = useTripParticipantsService({
     tripId,
   });
-  const { mutateAsync, isPending } = useInviteParticipant({ tripId });
+  const { mutateAsync, isPending } = useInviteParticipantService({ tripId });
 
   const { control, handleSubmit, reset } = useForm<{ email: string }>({
     defaultValues: {

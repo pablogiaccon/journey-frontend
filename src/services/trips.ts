@@ -4,6 +4,7 @@ import { IUseTripServices, TCreateNewActivity } from "./trips.type";
 import { api } from "@lib/axios";
 import {
   INewTripForm,
+  ITripActivities,
   ITripDetails,
   ITripLink,
   ITripParticipant,
@@ -54,6 +55,21 @@ const useTripLinksService = ({ tripId }: IUseTripServices) => {
   });
 };
 
+const useTripActivitiesService = ({ tripId }: IUseTripServices) => {
+  return useQuery({
+    queryKey: ["trip-activities", { tripId }],
+    queryFn: async () => {
+      if (!tripId) return undefined;
+
+      const response = await api.get<{ activities: ITripActivities[] }>(
+        `/trips/${tripId}/activities`
+      );
+
+      return response.data.activities;
+    },
+  });
+};
+
 const useCreateTripService = () => {
   return useMutation({
     mutationFn: (tripData: INewTripForm) => {
@@ -69,7 +85,7 @@ const useCreateTripService = () => {
   });
 };
 
-const useInviteParticipant = ({ tripId }: IUseTripServices) => {
+const useInviteParticipantService = ({ tripId }: IUseTripServices) => {
   return useMutation({
     mutationFn: ({ email }: { email: string }) => {
       return api.post(`/trips/${tripId}/invites`, {
@@ -79,7 +95,7 @@ const useInviteParticipant = ({ tripId }: IUseTripServices) => {
   });
 };
 
-const useCreateActivity = ({ tripId }: IUseTripServices) => {
+const useCreateActivityService = ({ tripId }: IUseTripServices) => {
   return useMutation({
     mutationFn: ({ occurs_at, title }: TCreateNewActivity) => {
       return api.post<{ activityId: string }>(`/trips/${tripId}/activities`, {
@@ -94,7 +110,8 @@ export {
   useTripDetailsService,
   useTripParticipantsService,
   useTripLinksService,
+  useTripActivitiesService,
   useCreateTripService,
-  useInviteParticipant,
-  useCreateActivity,
+  useInviteParticipantService,
+  useCreateActivityService,
 };

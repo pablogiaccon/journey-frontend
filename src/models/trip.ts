@@ -29,6 +29,11 @@ export interface ITripLink {
   url: string;
 }
 
+export interface ITripActivities {
+  date: Date;
+  activities: ITripActivity[];
+}
+
 export interface ITripActivity {
   id: string;
   title: string;

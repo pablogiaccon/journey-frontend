@@ -2,15 +2,17 @@ import { useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { Calendar, Plus, Tag } from "lucide-react";
 
-import { useCreateActivity, TCreateNewActivity } from "@services/index";
+import { useCreateActivityService, TCreateNewActivity } from "@services/index";
 
 import * as Modal from "../modal";
 import { Button } from "../button";
 import { Input } from "@components/input";
+import { queryClient } from "@lib/react-query";
 
 const CreateActivityContent: React.FC = () => {
   const { tripId } = useParams();
-  const { mutateAsync, isPending } = useCreateActivity({ tripId });
+  const { onClose } = Modal.useModalContext();
+  const { mutateAsync, isPending } = useCreateActivityService({ tripId });
   const { control, handleSubmit } = useForm<TCreateNewActivity>({
     defaultValues: {
       title: "",
@@ -24,6 +26,12 @@ const CreateActivityContent: React.FC = () => {
   }: TCreateNewActivity) {
     try {
       await mutateAsync({ occurs_at, title });
+
+      queryClient.invalidateQueries({
+        queryKey: ["trip-activities", { tripId }],
+      });
+
+      onClose();
     } catch (error) {
       console.log(error);
     }

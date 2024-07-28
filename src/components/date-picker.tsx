@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { DateRange, DayPicker } from "react-day-picker";
 import { Calendar } from "lucide-react";
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 import "react-day-picker/style.css";
 import * as Modal from "./modal";
@@ -19,8 +20,8 @@ export const DatePicker: React.FC<IProps> = (props) => {
   const formattedDate = useMemo(() => {
     if (!rangeDate?.from || !rangeDate?.to) return null;
 
-    const from = format(rangeDate.from, "d 'de' LLL");
-    const to = format(rangeDate.to, "'até' d 'de' LLL");
+    const from = format(rangeDate.from, "d 'de' LLL", { locale: ptBR });
+    const to = format(rangeDate.to, "'até' d 'de' LLL", { locale: ptBR });
 
     return `${from} ${to}`;
   }, [rangeDate]);
