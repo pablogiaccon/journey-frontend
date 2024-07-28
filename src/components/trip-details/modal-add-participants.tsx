@@ -1,78 +1,72 @@
-import {
-  Controller,
-  FieldArrayWithId,
-  useFieldArray,
-  UseFieldArrayAppend,
-  UseFieldArrayRemove,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
-import { UserRoundPlus, X, AtSign, Plus, OctagonX } from "lucide-react";
-import { isEmpty } from "lodash";
+import { AtSign, OctagonX, Plus, UserCog } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 
-import { INewTripForm } from "@models/index";
+import {
+  useInviteParticipant,
+  useTripParticipantsService,
+} from "@services/trips";
 import { validateDuplicity, validateEmail } from "@utils/validateEmail";
+import { queryClient } from "@lib/react-query";
 
 import * as Modal from "../modal";
 import { Button } from "../button";
+import { SpinLoader } from "@components/spin-loader";
 
-interface NewEmailForm {
-  email: string;
-}
+const ManageParticipantsContent = () => {
+  const { tripId } = useParams();
 
-interface IInviteGuests {
-  append: UseFieldArrayAppend<INewTripForm>;
-  remove: UseFieldArrayRemove;
-  fields: FieldArrayWithId<INewTripForm>[];
-}
+  const { data: participants, isFetching } = useTripParticipantsService({
+    tripId,
+  });
+  const { mutateAsync, isPending } = useInviteParticipant({ tripId });
 
-const InviteGuestsContent: React.FC<IInviteGuests> = (props) => {
-  const { append, remove, fields } = props;
-
-  const {
-    control: newEmailFormControl,
-    handleSubmit,
-    resetField,
-  } = useForm<NewEmailForm>({
+  const { control, handleSubmit, reset } = useForm<{ email: string }>({
     defaultValues: {
       email: "",
     },
   });
 
-  function handleAddNewEmail(data: NewEmailForm) {
-    const { email } = data;
-    append({ email });
-    resetField("email");
+  async function handleSubmitParticipantInvite(data: { email: string }) {
+    try {
+      const { email } = data;
+      await mutateAsync({ email });
+
+      queryClient.invalidateQueries({
+        queryKey: ["trip-participants", { tripId }],
+      });
+      reset();
+    } catch (error) {
+      console.log(error);
+    }
   }
+
   return (
     <>
       <div className="flex gap-2 flex-wrap">
-        {fields.map((guest, idx) => (
+        {participants?.map((participant) => (
           <div
-            key={guest.id}
+            key={participant.id}
             className="py-1.5 px-2.5 rounded-md bg-zinc-800 flex items-center gap-2"
           >
-            <span className="text-zinc-300">{guest.email}</span>
-
-            <button
-              className="text-zinc-400 hover:text-zinc-200 transition"
-              type="button"
-              onClick={() => remove(idx)}
-            >
-              <X className="size-4" />
-            </button>
+            <span className="text-zinc-300">{participant.email}</span>
           </div>
         ))}
+        {isFetching && (
+          <div className="flex items-center justify-center">
+            <SpinLoader variant="secondary" />
+          </div>
+        )}
       </div>
 
       <div className="w-full h-px bg-zinc-800" />
 
       <form
-        onSubmit={handleSubmit(handleAddNewEmail)}
+        onSubmit={handleSubmit(handleSubmitParticipantInvite)}
         className="p-2.5 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center gap-2"
       >
         <Controller
-          control={newEmailFormControl}
+          control={control}
           name="email"
           rules={{
             required: "Campo obrigatório",
@@ -81,8 +75,8 @@ const InviteGuestsContent: React.FC<IInviteGuests> = (props) => {
               isDuplicated: (email) =>
                 !validateDuplicity(
                   email,
-                  fields.map((item) => item.email)
-                ) || "E-mail já adicionado",
+                  participants?.map((item) => item.email) || []
+                ) || "E-mail já convidado",
             },
           }}
           render={({ field, fieldState: { invalid, error } }) => (
@@ -114,7 +108,12 @@ const InviteGuestsContent: React.FC<IInviteGuests> = (props) => {
                 )}
               </div>
 
-              <Button type="submit" disabled={invalid} icon={<Plus />}>
+              <Button
+                type="submit"
+                disabled={invalid}
+                icon={<Plus />}
+                isLoading={isPending}
+              >
                 Convidar
               </Button>
             </>
@@ -125,28 +124,13 @@ const InviteGuestsContent: React.FC<IInviteGuests> = (props) => {
   );
 };
 
-export const ModalInviteGuests: React.FC = () => {
-  const { control } = useFormContext<INewTripForm>();
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "guests",
-  });
-
+export const ModalManageParticipants: React.FC = () => {
   return (
     <Modal.Root>
-      <Modal.Trigger className="flex items-center gap-2 flex-1 text-left">
-        <UserRoundPlus className="size-5 text-zinc-400" />
-
-        {isEmpty(fields) ? (
-          <span className="text-zinc-400 text-lg flex-1">
-            Quem estará na viagem?
-          </span>
-        ) : (
-          <span className="text-zinc-100 text-lg flex-1">
-            {fields.length} pessoa(s) convidada(s)
-          </span>
-        )}
+      <Modal.Trigger asChild>
+        <Button variant="secondary" iconPosition="left" icon={<UserCog />}>
+          Gerenciar convidados
+        </Button>
       </Modal.Trigger>
 
       <Modal.Portal>
@@ -159,14 +143,10 @@ export const ModalInviteGuests: React.FC = () => {
               </p>
             }
           >
-            Selecionar convidados
+            Gerenciar convidados
           </Modal.Header>
 
-          <InviteGuestsContent
-            append={append}
-            fields={fields}
-            remove={remove}
-          />
+          <ManageParticipantsContent />
         </Modal.Content>
       </Modal.Portal>
       <Modal.Overlay />

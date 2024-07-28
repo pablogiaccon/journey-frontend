@@ -1,2 +1,2 @@
-export * from "./modal-invite-guests";
+export * from "./modal-invite-participant";
 export * from "./modal-trip-confirmation";

@@ -30,18 +30,21 @@
       "@components/*": [
         "src/components/*"
       ],
-      // "@assets/*": [
-      //   "src/assets/*"
-      // ],
       "@models/*": [
         "src/models/*"
       ],
       "@utils/*": [
         "src/utils/*"
       ],
-      // "@hooks/*": [
-      //   "src/hooks/*"
-      // ]
+      "@lib/*": [
+        "src/lib/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ]
     }
   },
   "include": [

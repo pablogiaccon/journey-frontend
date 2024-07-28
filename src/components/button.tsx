@@ -1,8 +1,10 @@
 import { ComponentProps } from "react";
 import { tv, VariantProps } from "tailwind-variants";
 
+import { SpinLoader } from "./spin-loader";
+
 const buttonVariants = tv({
-  base: "rounded-lg px-5 font-medium flex items-center justify-center gap-2 transition disabled:opacity-60",
+  base: "rounded-lg px-5 font-medium flex text-nowrap items-center justify-center gap-2 transition disabled:opacity-60",
   variants: {
     variant: {
       primary: "bg-lime-300 text-lime-950  hover:bg-lime-400",
@@ -25,6 +27,7 @@ interface IProps
   icon?: React.ReactNode;
   iconPosition?: "right" | "left";
   children: React.ReactNode;
+  isLoading?: boolean;
 }
 
 export const Button: React.FC<IProps> = (props) => {
@@ -35,19 +38,26 @@ export const Button: React.FC<IProps> = (props) => {
     children,
     iconPosition = "right",
     size,
+    isLoading = false,
     ...rest
   } = props;
 
   return (
     <button
       className={buttonVariants({ variant, size })}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       type="button"
       {...rest}
     >
-      {icon && iconPosition === "left" && icon}
-      {children}
-      {icon && iconPosition === "right" && icon}
+      {isLoading ? (
+        <SpinLoader variant={variant} />
+      ) : (
+        <>
+          {icon && iconPosition === "left" && icon}
+          {children}
+          {icon && iconPosition === "right" && icon}
+        </>
+      )}
     </button>
   );
 };

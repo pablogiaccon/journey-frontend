@@ -25,7 +25,7 @@ export const Input: React.FC<TInput> = (props) => {
   const { icon, error, containerStyles, ...rest } = props;
 
   return (
-    <div>
+    <div className="flex-1">
       <div className={inputVariants({ variant: containerStyles?.variant })}>
         {React.cloneElement(icon, { className: "size-5 text-zinc-400" })}
 

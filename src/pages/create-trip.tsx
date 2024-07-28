@@ -6,7 +6,7 @@ import { INewTripForm } from "@models/index";
 
 import { Button } from "@components/button";
 import {
-  ModalInviteGuests,
+  ModalInviteParticipants,
   ModalTripConfirmation,
 } from "@components/create-trip";
 import { DatePicker } from "@components/date-picker";
@@ -15,34 +15,34 @@ import { Input } from "@components/input";
 export function CreateTripPage() {
   const formMethods = useForm<INewTripForm>({
     defaultValues: {
-      guests: [],
-      location: "",
+      participants: [],
+      destination: "",
       ownerEmail: "",
       ownerName: "",
       rangeDate: undefined,
     },
   });
 
-  const [isGuestsInputOpen, setIsGuestsInputOpen] = useState(false);
+  const [isParticipantsInputOpen, setIsParticipantsInputOpen] = useState(false);
 
-  function handleOpenGuestsInput() {
-    setIsGuestsInputOpen(true);
+  function handleOpenParticipantsInput() {
+    setIsParticipantsInputOpen(true);
   }
 
-  function handleCloseGuestsInput() {
-    setIsGuestsInputOpen(false);
+  function handleCloseParticipantsInput() {
+    setIsParticipantsInputOpen(false);
   }
 
-  const location = formMethods.watch("location");
+  const destination = formMethods.watch("destination");
   const rangeDate = formMethods.watch("rangeDate");
 
-  const isLocationAndDateEmpty =
-    !!location.length && !!rangeDate?.from && !!rangeDate.to;
+  const isDestinationAndDateEmpty =
+    !!destination.length && !!rangeDate?.from && !!rangeDate.to;
 
   return (
     <FormProvider {...formMethods}>
       <div className="h-screen flex items-center justify-center bg-pattern bg-no-repeat bg-center">
-        <div className="text-center max-w-3xl w-full px-6 space-y-10">
+        <div className="text-center max-w-4xl w-full px-6 space-y-10">
           <div className="flex flex-col items-center gap-3">
             <img src="/logo.svg" alt="plann.er" />
             <p className="text-zinc-300 text-lg">
@@ -54,7 +54,7 @@ export function CreateTripPage() {
             <div className="h-16 bg-zinc-900 pr-4 rounded-xl flex items-center gap-3 shadow-shape">
               <Controller
                 control={formMethods.control}
-                name="location"
+                name="destination"
                 rules={{
                   required: "Campo obrigatório",
                 }}
@@ -64,7 +64,7 @@ export function CreateTripPage() {
                     containerStyles={{ variant: "embed" }}
                     placeholder="Para onde vc vai?"
                     type="text"
-                    disabled={isGuestsInputOpen}
+                    disabled={isParticipantsInputOpen}
                     value={field.value}
                     onChange={field.onChange}
                   />
@@ -79,35 +79,35 @@ export function CreateTripPage() {
                     onSelectRange={field.onChange}
                     rangeDate={field.value}
                     triggerText="Quando?"
-                    disabled={isGuestsInputOpen}
+                    disabled={isParticipantsInputOpen}
                   />
                 )}
               />
 
               <div className="w-px h-6 bg-zinc-800" />
 
-              {isGuestsInputOpen ? (
+              {isParticipantsInputOpen ? (
                 <Button
                   icon={<Settings2 />}
                   variant="secondary"
-                  onClick={handleCloseGuestsInput}
+                  onClick={handleCloseParticipantsInput}
                 >
                   Alterar local/data
                 </Button>
               ) : (
                 <Button
-                  disabled={!isLocationAndDateEmpty}
+                  disabled={!isDestinationAndDateEmpty}
                   icon={<ArrowRight />}
-                  onClick={handleOpenGuestsInput}
+                  onClick={handleOpenParticipantsInput}
                 >
                   Continuar
                 </Button>
               )}
             </div>
 
-            {isGuestsInputOpen && (
+            {isParticipantsInputOpen && (
               <div className="h-16 bg-zinc-900 px-4 rounded-xl flex items-center gap-3 shadow-shape">
-                <ModalInviteGuests />
+                <ModalInviteParticipants />
 
                 <div className="w-px h-6 bg-zinc-800" />
 

@@ -3,6 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { INewTripForm } from "@models/index";
+import { useCreateTripService } from "@services/index";
 import { validateEmail } from "@utils/validateEmail";
 
 import * as Modal from "../modal";
@@ -11,12 +12,19 @@ import { Input } from "../input";
 
 const TripConfirmationContent: React.FC = () => {
   const navigate = useNavigate();
+  const { mutateAsync, isPending } = useCreateTripService();
 
   const { control, handleSubmit } = useFormContext<INewTripForm>();
 
-  function handleConfirmTrip(data: INewTripForm) {
-    console.log("data: ", data);
-    navigate("/trip-details/123");
+  async function handleConfirmTrip(data: INewTripForm) {
+    try {
+      const response = await mutateAsync(data);
+      const { tripId } = response.data;
+
+      navigate(`trip-details/${tripId}`);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -64,6 +72,7 @@ const TripConfirmationContent: React.FC = () => {
         size="full"
         type="submit"
         onClick={handleSubmit(handleConfirmTrip)}
+        isLoading={isPending}
       >
         Confirmar criação da viagem
       </Button>
